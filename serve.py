@@ -13,8 +13,6 @@ PORT = 8000
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
-        # Don't set COEP/COOP headers - they block CDN workers
-        # FFmpeg will work without SharedArrayBuffer (slower but works)
         super().end_headers()
 
     def log_message(self, format, *args):

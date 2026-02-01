@@ -17,7 +17,7 @@ export const state = {
 
     // Processing state
     processing: {
-        status: 'idle', // 'idle' | 'loading-ffmpeg' | 'extracting' | 'hashing' | 'grouping' | 'complete' | 'error'
+        status: 'idle', // 'idle' | 'extracting' | 'hashing' | 'grouping' | 'complete' | 'error'
         progress: 0,
         currentFrame: 0,
         errors: [],
@@ -42,8 +42,6 @@ export const state = {
     // Persistent selections per group (Map: groupHash -> Set of frame indices)
     groupSelections: new Map(),
 
-    // FFmpeg instance
-    ffmpeg: null
 };
 
 /**

@@ -35,7 +35,7 @@ export async function processVideo(file, metadata) {
     updateState({
         processing: {
             ...state.processing,
-            status: 'loading-ffmpeg',
+            status: 'extracting',
             progress: 0,
             startTime: Date.now()
         }
@@ -44,15 +44,6 @@ export async function processVideo(file, metadata) {
     try {
         // Check for cancellation
         if (isCancelled) throw new Error('Processing cancelled by user');
-
-        // Skip FFmpeg loading - using canvas extraction instead
-        updateState({
-            processing: {
-                ...state.processing,
-                status: 'extracting',
-                progress: 10
-            }
-        });
 
         // Extract frames using canvas
         console.log('Extracting frames...');
@@ -139,31 +130,7 @@ export async function processVideo(file, metadata) {
 }
 
 /**
- * Load FFmpeg if not already loaded
- */
-async function loadFFmpeg() {
-    try {
-        console.log('Initializing FFmpeg...');
-        const { FFmpeg } = FFmpegWASM;
-        const ffmpeg = new FFmpeg();
-
-        console.log('Loading FFmpeg core files...');
-        // Load FFmpeg core files (paths relative to ffmpeg.js location in lib/)
-        await ffmpeg.load({
-            coreURL: './ffmpeg-core.js',
-            wasmURL: './ffmpeg-core.wasm'
-        });
-
-        console.log('FFmpeg loaded successfully!');
-        updateState({ ffmpeg });
-    } catch (error) {
-        console.error('❌ Failed to load FFmpeg:', error);
-        throw new Error(`FFmpeg load failed: ${error.message || error.toString()}`);
-    }
-}
-
-/**
- * Extract frames using HTML5 Canvas (simpler, no FFmpeg needed)
+ * Extract frames using HTML5 Canvas
  */
 async function extractFrames(file, metadata) {
     console.log('Using canvas-based extraction...');
@@ -264,9 +231,3 @@ async function calculateHashes(frames) {
     return hashedFrames;
 }
 
-/**
- * Fetch file helper
- */
-async function fetchFile(file) {
-    return new Uint8Array(await file.arrayBuffer());
-}

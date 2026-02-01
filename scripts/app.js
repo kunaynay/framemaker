@@ -32,9 +32,6 @@ async function init() {
     // Subscribe to state changes
     subscribe(handleStateChange);
 
-    // Pre-load FFmpeg in background
-    preloadFFmpeg();
-
     console.log('✅ Frame Maker ready');
 }
 
@@ -59,28 +56,6 @@ function checkBrowserSupport() {
     }
 
     return true;
-}
-
-/**
- * Pre-load FFmpeg for faster processing
- */
-async function preloadFFmpeg() {
-    try {
-        console.log('Loading FFmpeg from local files...');
-        const { FFmpeg } = FFmpegWASM;
-        const ffmpeg = new FFmpeg();
-
-        // Load FFmpeg core files (paths relative to ffmpeg.js location in lib/)
-        await ffmpeg.load({
-            coreURL: './ffmpeg-core.js',
-            wasmURL: './ffmpeg-core.wasm'
-        });
-
-        updateState({ ffmpeg });
-        console.log('✅ FFmpeg loaded');
-    } catch (error) {
-        console.error('Failed to load FFmpeg:', error);
-    }
 }
 
 /**
@@ -148,7 +123,7 @@ function extractVideoMetadata(file) {
             const height = video.videoHeight;
 
             // Estimate FPS (default to 30 if not available)
-            const fps = 30; // We'll get more accurate FPS from FFmpeg
+            const fps = 30;
 
             resolve({
                 duration,
@@ -327,7 +302,6 @@ function handleStateChange(newState) {
     // Don't render during processing of a new video
     if (newState.ui.currentView === 'grid' &&
         newState.frameGroups.size > 0 &&
-        newState.processing.status !== 'loading-ffmpeg' &&
         newState.processing.status !== 'extracting' &&
         newState.processing.status !== 'hashing' &&
         newState.processing.status !== 'grouping') {
@@ -386,10 +360,9 @@ function updateProcessingUI(processing) {
     });
 
     const stageMap = {
-        'loading-ffmpeg': 0,
-        'extracting': 1,
-        'hashing': 2,
-        'grouping': 3
+        'extracting': 0,
+        'hashing': 1,
+        'grouping': 2
     };
 
     const currentStageIndex = stageMap[processing.status];
@@ -405,7 +378,6 @@ function updateProcessingUI(processing) {
 
     // Update title and details based on status
     const statusMessages = {
-        'loading-ffmpeg': 'Loading FFmpeg...',
         'extracting': 'Extracting Frames',
         'hashing': 'Analyzing Similarity',
         'grouping': 'Grouping Duplicates',

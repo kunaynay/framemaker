@@ -22,11 +22,7 @@ Since this app uses ES6 modules, you need to serve it from a web server (not jus
 
 **Option A: Using Python**
 ```bash
-# Python 3
 python -m http.server 8000
-
-# Python 2
-python -m SimpleHTTPServer 8000
 ```
 
 **Option B: Using Node.js**
@@ -52,10 +48,9 @@ Navigate to `http://localhost:8000` in your browser (Chrome, Firefox, or Edge re
 ### 4. Wait for Processing
 
 The app will:
-1. Load FFmpeg (first time only, ~25MB)
-2. Extract frames from your video
-3. Calculate perceptual hashes
-4. Group similar frames
+1. Extract frames from your video
+2. Calculate perceptual hashes
+3. Group similar frames
 
 ### 5. Browse Results
 
@@ -111,7 +106,7 @@ Requires a modern browser with support for:
 
 ## Privacy
 
-All processing happens in your browser. Videos are never uploaded to any server. Frame data is stored temporarily in browser memory and IndexedDB, and is cleared when you close the tab or start a new video.
+All processing happens in your browser. Videos are never uploaded to any server. Frame data is stored temporarily in browser memory and is cleared when you close the tab or start a new video.
 
 ## Troubleshooting
 
