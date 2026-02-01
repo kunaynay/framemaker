@@ -56,10 +56,16 @@ function createFrameCard(group, index) {
     const frame = group.representativeFrame;
     const timestamp = formatTimestamp(frame.timestamp);
 
+    // Check if this group has selections
+    const groupSelections = state.groupSelections.get(group.hash);
+    const hasSelections = groupSelections && groupSelections.size > 0;
+    const selectionCount = hasSelections ? groupSelections.size : 0;
+
     card.innerHTML = `
         <div class="frame-image-container">
             <img src="${frame.url}" alt="Frame ${frame.index}" class="frame-image" loading="lazy">
             ${group.count > 1 ? `<div class="frame-badge">${group.count}×</div>` : ''}
+            ${hasSelections ? `<div class="frame-selection-badge">${selectionCount} selected</div>` : ''}
         </div>
         <div class="frame-info">
             <div class="frame-meta">

@@ -28,11 +28,60 @@
         </div>
     </header>
 
+    <!-- Steps Bar -->
+    <div class="steps-bar">
+        <div class="steps-container">
+            <div class="step-item">
+                <div class="feature-number">01</div>
+                <div class="feature-text">
+                    <h3>Extract All Frames</h3>
+                    <p>Precise frame-by-frame extraction at source quality</p>
+                </div>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item">
+                <div class="feature-number">02</div>
+                <div class="feature-text">
+                    <h3>Identify Duplicates</h3>
+                    <p>Perceptual hashing detects identical and similar frames</p>
+                </div>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item">
+                <div class="feature-number">03</div>
+                <div class="feature-text">
+                    <h3>Export Selectively</h3>
+                    <p>Download unique frames or multi-select from groups</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compact Upload Button (shown after processing) -->
+        <div class="compact-upload-wrapper" id="compactUploadWrapper">
+            <div class="compact-upload" id="compactUpload">
+                <div class="compact-upload-content">
+                    <svg class="compact-upload-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span class="compact-upload-text">Drop video file here or click to browse</span>
+                    <span class="compact-upload-specs">MP4, MOV, AVI • Max 100MB</span>
+                </div>
+                <div class="compact-upload-loader">
+                    <div class="loader-spinner"></div>
+                    <span>Processing video...</span>
+                </div>
+                <input type="file" id="compactVideoInput" accept="video/*" hidden>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Container -->
     <main class="app-container">
 
         <!-- Upload Section -->
-        <section id="uploadSection" class="upload-section active">
+        <section id="uploadSection" class="upload-section">
             <div class="upload-area" id="uploadArea">
                 <div class="upload-content">
                     <div class="upload-icon">
@@ -46,30 +95,6 @@
                     <p class="upload-subtitle">or click to browse</p>
                     <p class="upload-specs">MP4, MOV, AVI • Max 100MB • Up to 5 minutes</p>
                     <input type="file" id="videoInput" accept="video/*" hidden>
-                </div>
-            </div>
-
-            <div class="upload-features">
-                <div class="feature-item">
-                    <div class="feature-number">01</div>
-                    <div class="feature-text">
-                        <h3>Extract All Frames</h3>
-                        <p>Precise frame-by-frame extraction at source quality</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-number">02</div>
-                    <div class="feature-text">
-                        <h3>Identify Duplicates</h3>
-                        <p>Perceptual hashing detects identical and similar frames</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-number">03</div>
-                    <div class="feature-text">
-                        <h3>Export Selectively</h3>
-                        <p>Download unique frames or multi-select from groups</p>
-                    </div>
                 </div>
             </div>
         </section>
@@ -110,6 +135,16 @@
                         <span>Grouping Duplicates</span>
                     </div>
                 </div>
+
+                <div class="processing-actions">
+                    <button class="btn btn-secondary" id="cancelProcessingBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancel Processing
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -136,6 +171,22 @@
                         </label>
                         <input type="range" id="thresholdSlider" min="0" max="15" value="5" class="threshold-slider">
                     </div>
+
+                    <button class="btn btn-primary" id="downloadMultiSelectBtn" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span id="downloadMultiSelectText">Download Selected (0)</span>
+                    </button>
+
+                    <button class="btn btn-icon clear-btn" id="clearSelectionBtn" disabled title="Clear all selections">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
 
                     <button class="btn btn-primary" id="downloadAllBtn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

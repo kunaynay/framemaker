@@ -4,11 +4,14 @@ A cinematic video frame extraction and deduplication tool built with vanilla Jav
 
 ## Features
 
-- **Extract All Frames**: Precise frame-by-frame extraction using FFmpeg.wasm
+- **Extract All Frames**: Precise frame-by-frame extraction using canvas-based processing
 - **Perceptual Similarity Detection**: Groups identical and similar frames using pHash algorithm
 - **Interactive Grid View**: Browse unique frames with duplicate count badges
 - **Multi-Select Export**: Click on groups to view all similar frames and selectively download
+- **Cross-Group Selection**: Select frames from multiple groups and download them all at once
+- **Persistent Selections**: Frame selections persist when navigating between groups
 - **Adjustable Threshold**: Fine-tune similarity detection with a threshold slider
+- **Cancel Processing**: Stop video processing at any time with the cancel button
 - **Client-Side Processing**: Everything runs in your browser - your videos never leave your device
 
 ## How to Use
@@ -57,7 +60,8 @@ The app will:
 ### 5. Browse Results
 
 - View unique frame groups in a grid
-- Frames with duplicates show a count badge (e.g., "3×")
+- Frames with duplicates show a count badge (e.g., "3x")
+- Groups with selections show a green badge indicating how many frames are selected
 - Adjust the similarity threshold slider to regroup frames
 - Click "Download All Unique" to export one frame from each group
 
@@ -65,7 +69,9 @@ The app will:
 
 - Click on any frame group to see all similar frames
 - Use checkboxes to multi-select frames you want
-- Click "Download Selected" to export as a ZIP file
+- Selections persist when you close the modal - select frames from multiple groups
+- Use "Download Selected" in the grid toolbar to export all selected frames across groups as a ZIP file
+- Use "Clear" button to reset all selections
 
 ## Similarity Threshold
 
@@ -78,19 +84,18 @@ The threshold slider (0-15) controls how similar frames need to be to group toge
 ## Technical Details
 
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
-- **Video Processing**: FFmpeg.wasm (WebAssembly)
+- **Video Processing**: Canvas-based frame extraction
 - **Similarity Detection**: Perceptual Hash (pHash) with DCT
 - **Comparison**: Hamming distance on 64-bit hashes
-- **Export**: JSZip for creating downloadable archives
+- **Export**: JSZip for creating downloadable archives (named after source video)
 
 ## Browser Compatibility
 
 Requires a modern browser with support for:
 - Canvas API
-- Web Workers
-- WebAssembly
+- Video element
 - ES6 Modules
-- IndexedDB
+- Blob URLs
 
 **Tested on:**
 - Chrome 90+
@@ -100,8 +105,7 @@ Requires a modern browser with support for:
 
 ## Performance
 
-- **FFmpeg Loading**: ~5 seconds (cached after first load)
-- **Frame Extraction**: ~30 frames/second
+- **Frame Extraction**: ~30 frames/second (canvas-based)
 - **Hash Calculation**: ~50 frames/second
 - **Memory Usage**: <500MB for 5-minute videos
 
@@ -110,10 +114,6 @@ Requires a modern browser with support for:
 All processing happens in your browser. Videos are never uploaded to any server. Frame data is stored temporarily in browser memory and IndexedDB, and is cleared when you close the tab or start a new video.
 
 ## Troubleshooting
-
-**"Failed to load FFmpeg"**
-- Check your internet connection (FFmpeg loads from CDN on first run)
-- Try refreshing the page
 
 **"File too large"**
 - Videos must be under 100MB
@@ -160,7 +160,6 @@ frame-maker/
 ## Credits
 
 Built with:
-- [FFmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm) - Video processing
 - [JSZip](https://stukjs.github.io/jszip/) - ZIP file creation
 
 ## License

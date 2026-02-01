@@ -9,8 +9,28 @@ import { groupFrames } from './frame-grouper.js';
 
 const BATCH_SIZE = 30; // Process frames in batches
 
+// Cancellation flag
+let isCancelled = false;
+
+/**
+ * Cancel the current video processing
+ */
+export function cancelProcessing() {
+    isCancelled = true;
+}
+
+/**
+ * Reset cancellation flag
+ */
+function resetCancellation() {
+    isCancelled = false;
+}
+
 export async function processVideo(file, metadata) {
     console.log('🎬 Starting video processing...', { file: file.name, metadata });
+
+    // Reset cancellation flag at the start
+    resetCancellation();
 
     updateState({
         processing: {
@@ -22,6 +42,9 @@ export async function processVideo(file, metadata) {
     });
 
     try {
+        // Check for cancellation
+        if (isCancelled) throw new Error('Processing cancelled by user');
+
         // Skip FFmpeg loading - using canvas extraction instead
         updateState({
             processing: {
@@ -36,6 +59,9 @@ export async function processVideo(file, metadata) {
         const frames = await extractFrames(file, metadata);
         console.log(`✅ Extracted ${frames.length} frames`);
 
+        // Check for cancellation
+        if (isCancelled) throw new Error('Processing cancelled by user');
+
         updateState({
             processing: {
                 ...state.processing,
@@ -48,6 +74,9 @@ export async function processVideo(file, metadata) {
         console.log('Calculating hashes...');
         const hashedFrames = await calculateHashes(frames);
         console.log('✅ Hashes calculated');
+
+        // Check for cancellation
+        if (isCancelled) throw new Error('Processing cancelled by user');
 
         updateState({
             processing: {
@@ -62,6 +91,9 @@ export async function processVideo(file, metadata) {
         const groups = groupFrames(hashedFrames, state.ui.similarityThreshold);
         console.log(`✅ Created ${groups.size} groups`);
 
+        // Check for cancellation
+        if (isCancelled) throw new Error('Processing cancelled by user');
+
         // Update state
         updateState({
             allFrames: hashedFrames,
@@ -74,20 +106,34 @@ export async function processVideo(file, metadata) {
         });
 
     } catch (error) {
-        console.error('❌ PROCESSING ERROR:', error);
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
+        // Check if it's a cancellation error
+        const isCancellationError = error.message === 'Processing cancelled by user';
 
-        alert(`Error: ${error.message || error.toString()}\n\nCheck the browser console (F12) for details.`);
+        if (!isCancellationError) {
+            console.error('❌ PROCESSING ERROR:', error);
+            console.error('Error name:', error.name);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
 
-        updateState({
-            processing: {
-                ...state.processing,
-                status: 'error',
-                errors: [...state.processing.errors, error.message || error.toString()]
-            }
-        });
+            alert(`Error: ${error.message || error.toString()}\n\nCheck the browser console (F12) for details.`);
+
+            updateState({
+                processing: {
+                    ...state.processing,
+                    status: 'error',
+                    errors: [...state.processing.errors, error.message || error.toString()]
+                }
+            });
+        } else {
+            console.log('Processing cancelled by user');
+            updateState({
+                processing: {
+                    ...state.processing,
+                    status: 'idle'
+                }
+            });
+        }
+
         throw error;
     }
 }

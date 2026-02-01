@@ -39,6 +39,9 @@ export const state = {
         showAllFrames: false
     },
 
+    // Persistent selections per group (Map: groupHash -> Set of frame indices)
+    groupSelections: new Map(),
+
     // FFmpeg instance
     ffmpeg: null
 };
@@ -100,6 +103,9 @@ export function resetState() {
         currentView: 'upload',
         selectedGroup: null,
         similarityThreshold: 5,
-        selectedFrames: new Set()
+        selectedFrames: new Set(),
+        showAllFrames: false
     };
+
+    state.groupSelections.clear();
 }

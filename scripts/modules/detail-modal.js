@@ -18,6 +18,18 @@ export function initDetailModal() {
 
     // Close modal
     const closeModal = () => {
+        // Save current selections for this group before closing
+        if (currentGroup && state.ui.selectedFrames.size > 0) {
+            const updatedSelections = new Map(state.groupSelections);
+            updatedSelections.set(currentGroup.hash, new Set(state.ui.selectedFrames));
+            updateState({ groupSelections: updatedSelections });
+        } else if (currentGroup && state.ui.selectedFrames.size === 0) {
+            // If no selections, remove the group from saved selections
+            const updatedSelections = new Map(state.groupSelections);
+            updatedSelections.delete(currentGroup.hash);
+            updateState({ groupSelections: updatedSelections });
+        }
+
         modal?.classList.remove('active');
         currentGroup = null;
         updateState({
@@ -39,6 +51,10 @@ export function initDetailModal() {
         updateState({
             ui: { ...state.ui, selectedFrames: allFrames }
         });
+        // Update groupSelections for multi-select button
+        const updatedSelections = new Map(state.groupSelections);
+        updatedSelections.set(currentGroup.hash, new Set(allFrames));
+        updateState({ groupSelections: updatedSelections });
         renderModalFrames(currentGroup);
     });
 
@@ -47,6 +63,12 @@ export function initDetailModal() {
         updateState({
             ui: { ...state.ui, selectedFrames: new Set() }
         });
+        // Update groupSelections for multi-select button
+        if (currentGroup) {
+            const updatedSelections = new Map(state.groupSelections);
+            updatedSelections.delete(currentGroup.hash);
+            updateState({ groupSelections: updatedSelections });
+        }
         renderModalFrames(currentGroup);
     });
 
@@ -67,11 +89,14 @@ export function openDetailModal(group) {
     currentGroup = group;
     const modal = document.getElementById('detailModal');
 
+    // Restore previously saved selections for this group, if any
+    const savedSelections = state.groupSelections.get(group.hash) || new Set();
+
     updateState({
         ui: {
             ...state.ui,
             selectedGroup: group.hash,
-            selectedFrames: new Set()
+            selectedFrames: new Set(savedSelections)
         }
     });
 
@@ -148,9 +173,21 @@ function toggleFrameSelection(frameIndex) {
         selected.add(frameIndex);
     }
 
+    // Update UI state
     updateState({
         ui: { ...state.ui, selectedFrames: selected }
     });
+
+    // Also update groupSelections in real-time for the multi-select button
+    if (currentGroup) {
+        const updatedSelections = new Map(state.groupSelections);
+        if (selected.size > 0) {
+            updatedSelections.set(currentGroup.hash, new Set(selected));
+        } else {
+            updatedSelections.delete(currentGroup.hash);
+        }
+        updateState({ groupSelections: updatedSelections });
+    }
 }
 
 function updateSelectionInfo() {

@@ -17,9 +17,39 @@ export async function downloadAllUnique() {
             frames.push(group.representativeFrame);
         }
 
-        await createAndDownloadZip(frames, 'unique-frames');
+        const zipName = getZipName('unique-frames');
+        await createAndDownloadZip(frames, zipName);
 
         showToast(`Downloaded ${frames.length} unique frames`, 'success');
+    } catch (error) {
+        console.error('Download error:', error);
+        showToast('Failed to create download', 'error');
+    }
+}
+
+export async function downloadMultiSelected() {
+    try {
+        // Collect all selected frame indices from all groups
+        const allSelectedIndices = new Set();
+
+        state.groupSelections.forEach(selectedSet => {
+            selectedSet.forEach(index => allSelectedIndices.add(index));
+        });
+
+        if (allSelectedIndices.size === 0) {
+            showToast('No frames selected', 'warning');
+            return;
+        }
+
+        showToast('Preparing download...', 'success');
+
+        // Find all selected frames
+        const frames = state.allFrames.filter(f => allSelectedIndices.has(f.index));
+
+        const zipName = getZipName('selected-frames');
+        await createAndDownloadZip(frames, zipName);
+
+        showToast(`Downloaded ${frames.length} frames`, 'success');
     } catch (error) {
         console.error('Download error:', error);
         showToast('Failed to create download', 'error');
@@ -40,13 +70,24 @@ export async function downloadSelected() {
         // Find selected frames
         const frames = state.allFrames.filter(f => selectedIndices.has(f.index));
 
-        await createAndDownloadZip(frames, 'selected-frames');
+        const zipName = getZipName('selected-frames');
+        await createAndDownloadZip(frames, zipName);
 
         showToast(`Downloaded ${frames.length} frames`, 'success');
     } catch (error) {
         console.error('Download error:', error);
         showToast('Failed to create download', 'error');
     }
+}
+
+/**
+ * Generate ZIP filename based on video name and suffix
+ */
+function getZipName(suffix) {
+    const videoFileName = state.video.fileName || 'video';
+    // Remove file extension from video name
+    const baseName = videoFileName.replace(/\.[^/.]+$/, '');
+    return `${baseName}-${suffix}`;
 }
 
 async function createAndDownloadZip(frames, zipName) {

@@ -3,8 +3,8 @@
  */
 
 import { state, updateState, subscribe } from './state.js';
-import { initUploadHandler } from './modules/upload-handler.js';
-import { processVideo } from './modules/video-processor.js';
+import { initUploadHandler, setUploadLoading, showCompactUpload } from './modules/upload-handler.js';
+import { processVideo, cancelProcessing } from './modules/video-processor.js';
 import { renderGrid } from './modules/grid-renderer.js';
 import { initDetailModal } from './modules/detail-modal.js';
 import { showToast } from './utils/toast.js';
@@ -93,6 +93,20 @@ async function handleVideoUpload(file) {
     completionToastShown = false;
 
     try {
+        // Clear old data from previous video
+        updateState({
+            frameGroups: new Map(),
+            allFrames: [],
+            groupSelections: new Map(),
+            processing: {
+                status: 'idle',
+                progress: 0,
+                currentFrame: 0,
+                errors: [],
+                startTime: null
+            }
+        });
+
         // Extract video metadata
         const metadata = await extractVideoMetadata(file);
         console.log('Video metadata:', metadata);
@@ -112,6 +126,10 @@ async function handleVideoUpload(file) {
     } catch (error) {
         console.error('Error processing video:', error);
         showToast(`Error: ${error.message}`, 'error');
+
+        // Fully reset upload UI state
+        resetUploadState();
+
         switchView('upload');
     }
 }
@@ -179,6 +197,18 @@ function initUIControls() {
         regroupFrames(value);
     });
 
+    // Download multi-select button
+    document.getElementById('downloadMultiSelectBtn')?.addEventListener('click', async () => {
+        const { downloadMultiSelected } = await import('./modules/export-manager.js');
+        downloadMultiSelected();
+    });
+
+    // Clear selection button
+    document.getElementById('clearSelectionBtn')?.addEventListener('click', () => {
+        updateState({ groupSelections: new Map() });
+        showToast('Selection cleared', 'success');
+    });
+
     // Download all button
     document.getElementById('downloadAllBtn')?.addEventListener('click', async () => {
         const { downloadAllUnique } = await import('./modules/export-manager.js');
@@ -188,9 +218,36 @@ function initUIControls() {
     // New video button
     document.getElementById('newVideoBtn')?.addEventListener('click', () => {
         if (confirm('Start over with a new video? Current progress will be lost.')) {
+            setUploadLoading(false);
+            showCompactUpload(false);
             location.reload();
         }
     });
+
+    // Cancel processing button
+    document.getElementById('cancelProcessingBtn')?.addEventListener('click', () => {
+        if (confirm('Are you sure you want to cancel processing?')) {
+            cancelProcessing();
+
+            // Fully reset upload UI state
+            resetUploadState();
+
+            switchView('upload');
+            showToast('Processing cancelled', 'warning');
+        }
+    });
+}
+
+/**
+ * Reset upload UI to initial state
+ */
+function resetUploadState() {
+    setUploadLoading(false);
+    showCompactUpload(false);
+
+    // Show upload section again
+    const uploadSection = document.getElementById('uploadSection');
+    uploadSection?.classList.remove('hidden');
 }
 
 /**
@@ -261,6 +318,46 @@ function handleStateChange(newState) {
         if (gridStats) {
             gridStats.textContent = `${uniqueGroups} unique groups • ${totalFrames} total frames • ${duplicates} similar frames grouped`;
         }
+    }
+
+    // Update multi-select download button
+    updateMultiSelectButton(newState);
+
+    // Re-render grid only if we're in grid view and have frames to show
+    // Don't render during processing of a new video
+    if (newState.ui.currentView === 'grid' &&
+        newState.frameGroups.size > 0 &&
+        newState.processing.status !== 'loading-ffmpeg' &&
+        newState.processing.status !== 'extracting' &&
+        newState.processing.status !== 'hashing' &&
+        newState.processing.status !== 'grouping') {
+        renderGrid();
+    }
+}
+
+/**
+ * Update multi-select download button state
+ */
+function updateMultiSelectButton(newState) {
+    const btn = document.getElementById('downloadMultiSelectBtn');
+    const btnText = document.getElementById('downloadMultiSelectText');
+    const clearBtn = document.getElementById('clearSelectionBtn');
+
+    if (!btn || !btnText) return;
+
+    // Calculate total selected frames across all groups
+    let totalSelected = 0;
+    newState.groupSelections.forEach(selectedSet => {
+        totalSelected += selectedSet.size;
+    });
+
+    // Update button text and state
+    btnText.textContent = `Download Selected (${totalSelected})`;
+    btn.disabled = totalSelected === 0;
+
+    // Update clear button state
+    if (clearBtn) {
+        clearBtn.disabled = totalSelected === 0;
     }
 }
 
@@ -338,6 +435,8 @@ function updateProcessingUI(processing) {
         setTimeout(() => {
             switchView('grid');
             renderGrid();
+            setUploadLoading(false);
+            showCompactUpload(true);
             showToast('Processing complete!', 'success');
         }, 500);
     }

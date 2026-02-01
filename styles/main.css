@@ -178,7 +178,10 @@ p {
     animation: fadeIn var(--transition-slow) ease-out;
 }
 
-.upload-section.active,
+.upload-section.active {
+    display: flex;
+}
+
 .processing-section.active,
 .grid-section.active {
     display: block;
@@ -247,14 +250,34 @@ p {
 }
 
 .btn-icon {
-    padding: 0.5rem;
+    padding: 0.625rem;
     background-color: transparent;
     color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
 }
 
-.btn-icon:hover {
+.clear-btn {
+    padding-inline: 0.5rem;
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+}
+
+.clear-btn:hover {
+    background-color: var(--color-error) !important;
+    color: var(--color-bg-primary) !important;
+}
+
+.clear-btn:disabled{
+    background-color: transparent !important;
+    color: var(--color-text-secondary) !important;
+    border: 1px solid var(--color-text-secondary) !important;
+}
+
+.btn-icon:hover:not(:disabled) {
     background-color: var(--color-bg-elevated);
-    color: var(--color-text-primary);
+    color: var(--color-error);
+    border-color: var(--color-error);
 }
 
 .btn:disabled {
