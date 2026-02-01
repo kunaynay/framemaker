@@ -1,0 +1,189 @@
+/* ============================================
+   Upload Section
+   ============================================ */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+    align-items: center;
+    min-height: 70vh;
+    justify-content: center;
+}
+
+.upload-area {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+}
+
+.upload-area::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, var(--color-accent-dim), transparent 50%, var(--color-accent-dim));
+    border-radius: var(--radius-lg);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.upload-area.drag-over::before {
+    opacity: 1;
+}
+
+.upload-content {
+    position: relative;
+    background-color: var(--color-bg-secondary);
+    border: 2px dashed var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3xl) var(--spacing-2xl);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.upload-content:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-accent-dim);
+}
+
+.upload-area.drag-over .upload-content {
+    background-color: var(--color-bg-elevated);
+    border-color: var(--color-accent);
+    border-style: solid;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-lg);
+    animation: floatUpDown 3s ease-in-out infinite;
+}
+
+@keyframes floatUpDown {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.upload-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.upload-subtitle {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.upload-specs {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    display: inline-block;
+}
+
+/* ============================================
+   Upload Features
+   ============================================ */
+.upload-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-xl);
+    width: 100%;
+    max-width: 1200px;
+}
+
+.feature-item {
+    display: flex;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+    animation: fadeInUp var(--transition-slow) ease-out backwards;
+}
+
+.feature-item:nth-child(1) {
+    animation-delay: 100ms;
+}
+
+.feature-item:nth-child(2) {
+    animation-delay: 200ms;
+}
+
+.feature-item:nth-child(3) {
+    animation-delay: 300ms;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-item:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-accent-dim);
+    transform: translateY(-4px);
+}
+
+.feature-number {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    line-height: 1;
+    min-width: 40px;
+}
+
+.feature-text h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.feature-text p {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+/* ============================================
+   Responsive Upload
+   ============================================ */
+@media (max-width: 768px) {
+    .upload-section {
+        min-height: auto;
+        gap: var(--spacing-2xl);
+    }
+
+    .upload-content {
+        padding: var(--spacing-2xl) var(--spacing-lg);
+    }
+
+    .upload-title {
+        font-size: 1.25rem;
+    }
+
+    .upload-features {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+}

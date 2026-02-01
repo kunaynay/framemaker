@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame Maker - Video Frame Extraction Lab</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/upload.css">
+    <link rel="stylesheet" href="styles/grid-view.css">
+    <link rel="stylesheet" href="styles/detail-view.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">
+                <span class="title-icon">◼</span>
+                <span>FRAME MAKER</span>
+            </h1>
+            <div class="header-info" id="videoInfo"></div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-container">
+
+        <!-- Upload Section -->
+        <section id="uploadSection" class="upload-section active">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content">
+                    <div class="upload-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h2 class="upload-title">Drop video file here</h2>
+                    <p class="upload-subtitle">or click to browse</p>
+                    <p class="upload-specs">MP4, MOV, AVI • Max 100MB • Up to 5 minutes</p>
+                    <input type="file" id="videoInput" accept="video/*" hidden>
+                </div>
+            </div>
+
+            <div class="upload-features">
+                <div class="feature-item">
+                    <div class="feature-number">01</div>
+                    <div class="feature-text">
+                        <h3>Extract All Frames</h3>
+                        <p>Precise frame-by-frame extraction at source quality</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-number">02</div>
+                    <div class="feature-text">
+                        <h3>Identify Duplicates</h3>
+                        <p>Perceptual hashing detects identical and similar frames</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-number">03</div>
+                    <div class="feature-text">
+                        <h3>Export Selectively</h3>
+                        <p>Download unique frames or multi-select from groups</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Processing Section -->
+        <section id="processingSection" class="processing-section">
+            <div class="processing-content">
+                <div class="processing-header">
+                    <h2 class="processing-title" id="processingTitle">Initializing...</h2>
+                    <div class="processing-stats" id="processingStats"></div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span id="progressPercent">0%</span>
+                        <span id="progressDetail"></span>
+                    </div>
+                </div>
+
+                <div class="processing-stages">
+                    <div class="stage" data-stage="loading">
+                        <div class="stage-indicator"></div>
+                        <span>Loading FFmpeg</span>
+                    </div>
+                    <div class="stage" data-stage="extracting">
+                        <div class="stage-indicator"></div>
+                        <span>Extracting Frames</span>
+                    </div>
+                    <div class="stage" data-stage="hashing">
+                        <div class="stage-indicator"></div>
+                        <span>Analyzing Similarity</span>
+                    </div>
+                    <div class="stage" data-stage="grouping">
+                        <div class="stage-indicator"></div>
+                        <span>Grouping Duplicates</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grid Section -->
+        <section id="gridSection" class="grid-section">
+            <div class="grid-header">
+                <div class="grid-title-area">
+                    <h2 class="section-title">Unique Frames</h2>
+                    <div class="grid-stats" id="gridStats"></div>
+                </div>
+
+                <div class="grid-controls">
+                    <div class="control-group">
+                        <label for="viewModeToggle" class="control-label" style="margin-right: 1rem;">
+                            <input type="checkbox" id="viewModeToggle" style="margin-right: 0.5rem;">
+                            Show All Frames
+                        </label>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="thresholdSlider" class="control-label">
+                            Similarity Threshold
+                            <span class="control-value" id="thresholdValue">5</span>
+                        </label>
+                        <input type="range" id="thresholdSlider" min="0" max="15" value="5" class="threshold-slider">
+                    </div>
+
+                    <button class="btn btn-primary" id="downloadAllBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download All Unique
+                    </button>
+
+                    <button class="btn btn-secondary" id="newVideoBtn">
+                        New Video
+                    </button>
+                </div>
+            </div>
+
+            <div class="frames-grid" id="framesGrid"></div>
+        </section>
+
+    </main>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="detail-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-area">
+                    <h2 class="modal-title">Frame Group</h2>
+                    <div class="modal-stats" id="modalStats"></div>
+                </div>
+                <div class="modal-actions">
+                    <div class="selection-info" id="selectionInfo">0 selected</div>
+                    <button class="btn btn-small" id="selectAllBtn">Select All</button>
+                    <button class="btn btn-small" id="deselectAllBtn">Deselect All</button>
+                    <button class="btn btn-primary" id="downloadSelectedBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Selected
+                    </button>
+                    <button class="btn btn-icon modal-close" id="closeModalBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-grid" id="modalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="./lib/ffmpeg.js"></script>
+    <script type="module" src="scripts/app.js"></script>
+</body>
+</html>

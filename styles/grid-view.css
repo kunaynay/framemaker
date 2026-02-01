@@ -1,0 +1,367 @@
+/* ============================================
+   Processing Section
+   ============================================ */
+.processing-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-3xl) 0;
+}
+
+.processing-content {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-2xl);
+}
+
+.processing-header {
+    margin-bottom: var(--spacing-2xl);
+    text-align: center;
+}
+
+.processing-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.processing-stats {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+}
+
+/* Progress Bar */
+.progress-container {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.progress-bar {
+    height: 4px;
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent-dim), var(--color-accent));
+    border-radius: var(--radius-sm);
+    transition: width 300ms ease-out;
+    width: 0%;
+    box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+}
+
+#progressPercent {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+#progressDetail {
+    color: var(--color-text-secondary);
+}
+
+/* Processing Stages */
+.processing-stages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.stage {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: all var(--transition-base);
+}
+
+.stage-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-border-strong);
+    transition: all var(--transition-base);
+}
+
+.stage.active {
+    color: var(--color-text-primary);
+    border-color: var(--color-accent-dim);
+}
+
+.stage.active .stage-indicator {
+    background-color: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-accent-glow);
+    animation: pingStage 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.stage.complete {
+    color: var(--color-text-secondary);
+}
+
+.stage.complete .stage-indicator {
+    background-color: var(--color-success);
+}
+
+@keyframes pingStage {
+    75%, 100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   Grid Section
+   ============================================ */
+.grid-section {
+    animation: fadeIn var(--transition-slow) ease-out;
+}
+
+.grid-header {
+    margin-bottom: var(--spacing-2xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+.grid-title-area {
+    flex: 1;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.grid-stats {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+}
+
+.grid-controls {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+/* Threshold Control */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.control-label {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.control-value {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.threshold-slider {
+    width: 180px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    outline: none;
+    cursor: pointer;
+}
+
+.threshold-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 0 0 0 var(--color-accent-glow);
+}
+
+.threshold-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 4px var(--color-accent-glow);
+}
+
+.threshold-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--color-accent);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.threshold-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Frames Grid */
+.frames-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.frame-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    animation: fadeInScale var(--transition-slow) ease-out backwards;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.frame-card:hover {
+    border-color: var(--color-accent-dim);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.frame-card:active {
+    transform: translateY(-2px);
+}
+
+.frame-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    background-color: var(--color-bg-tertiary);
+    overflow: hidden;
+}
+
+.frame-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: var(--color-bg-primary);
+    transition: transform var(--transition-base);
+}
+
+.frame-card:hover .frame-image {
+    transform: scale(1.05);
+}
+
+.frame-badge {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background-color: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--color-accent-dim);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent);
+}
+
+.frame-info {
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.frame-meta {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+}
+
+.frame-timestamp {
+    color: var(--color-text-tertiary);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-3xl);
+    color: var(--color-text-secondary);
+}
+
+.empty-state svg {
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.3;
+}
+
+/* ============================================
+   Responsive Grid
+   ============================================ */
+@media (max-width: 1024px) {
+    .frames-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .grid-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .threshold-slider {
+        width: 100%;
+    }
+
+    .frames-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+    }
+}
